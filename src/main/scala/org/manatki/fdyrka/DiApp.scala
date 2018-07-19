@@ -27,19 +27,19 @@ final case class DiApp[F[_]: MonadError[?[_], Throwable]](
 }
 
 object DiApp extends IOApp {
-  def unliftErr[F[_], E, E1](f: E => E1)(implicit err: MonadError[F, E1]): EitherT[F, E, ?] ~> F =
+  def unliftErr[F[_], E](f: E => Throwable)(implicit err: MonadError[F, Throwable]): EitherT[F, E, ?] ~> F =
     functionK[EitherT[F, E, ?]](_.leftMap(f).value.flatMap(_.raiseOrPure[F]))
 
   def makeApp[F[_]: Concurrent]: F[DiApp[F]] =
     for {
       storage <- Storage[F, String, BigDecimal]
       account = AccountService(storage.mapK(EitherT.liftK[F, AccountError]), 100)
-        .mapK(unliftErr(err => AppAccountError(err): Throwable))
+        .mapK(unliftErr(AppAccountError))
       output = Output.console[F]
       input  = Input.console[F]
       exec   = ExecuteCommand.account[F](account, output)
       parser = Parser(exec.mapK(EitherT.liftK[F, ParseError]))
-        .mapK(unliftErr(err => AppParseError(err): Throwable))
+        .mapK(unliftErr(AppParseError))
     } yield DiApp(input, parser, output)
 
   override def run(args: List[String]): IO[ExitCode] =
