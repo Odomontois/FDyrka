@@ -15,7 +15,7 @@ sealed trait Input[F[_]] {
 }
 
 object Input {
-  def console[F[_] : Sync]: Input[F] = new Input[F] {
+  def console[F[_]: Sync]: Input[F] = new Input[F] {
     override def readLine: F[String] = Sync[F].delay(StdIn.readLine())
   }
 }

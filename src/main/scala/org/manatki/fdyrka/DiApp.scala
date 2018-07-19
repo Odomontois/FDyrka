@@ -27,19 +27,17 @@ final case class DiApp[F[_]: MonadError[?[_], Throwable]](
 }
 
 object DiApp extends IOApp {
-  def unliftErr[F[_], E, E1](f: E => E1)(
-      implicit err: MonadError[F, E1]): EitherT[F, E, ?] ~> F =
+  def unliftErr[F[_], E, E1](f: E => E1)(implicit err: MonadError[F, E1]): EitherT[F, E, ?] ~> F =
     functionK[EitherT[F, E, ?]](_.leftMap(f).value.flatMap(_.raiseOrPure[F]))
 
   def makeApp[F[_]: Concurrent]: F[DiApp[F]] =
     for {
       storage <- Storage[F, String, BigDecimal]
-      account = AccountService(storage.mapK(EitherT.liftK[F, AccountError]),
-                               100)
+      account = AccountService(storage.mapK(EitherT.liftK[F, AccountError]), 100)
         .mapK(unliftErr(err => AppAccountError(err): Throwable))
       output = Output.console[F]
-      input = Input.console[F]
-      exec = ExecuteCommand.account[F](account, output)
+      input  = Input.console[F]
+      exec   = ExecuteCommand.account[F](account, output)
       parser = Parser(exec.mapK(EitherT.liftK[F, ParseError]))
         .mapK(unliftErr(err => AppParseError(err): Throwable))
     } yield DiApp(input, parser, output)
@@ -48,10 +46,7 @@ object DiApp extends IOApp {
     makeApp[IO] flatMap (_.run) as ExitCode.Success
 }
 
-sealed abstract class AppError(message: String)
-    extends Exception(message, null, false, true)
+sealed abstract class AppError(message: String) extends Exception(message, null, false, true)
 
-final case class AppParseError(err: ParseError)
-    extends AppError(s"Parse Error: $err")
-final case class AppAccountError(err: AccountError)
-    extends AppError(s"Account Error: $err")
+final case class AppParseError(err: ParseError)     extends AppError(s"Parse Error: $err")
+final case class AppAccountError(err: AccountError) extends AppError(s"Account Error: $err")

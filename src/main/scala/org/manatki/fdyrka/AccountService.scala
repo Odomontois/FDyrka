@@ -22,10 +22,14 @@ trait AccountService[F[_]] {
 
 object AccountService {
 
-  def apply[F[_]: MonadError[?[_], AccountError]](storage: Storage[String, BigDecimal, F], initialAmount: BigDecimal = 0): AccountService[F] =
+  def apply[F[_]: MonadError[?[_], AccountError]](storage: Storage[String, BigDecimal, F],
+                                                  initialAmount: BigDecimal = 0): AccountService[F] =
     Impl(storage, initialAmount)
 
-  private case class Impl[F[_]](storage: Storage[String, BigDecimal, F], initialAmount: BigDecimal)(implicit F: MonadError[F, AccountError])
+  private case class Impl[F[_]](
+      storage: Storage[String, BigDecimal, F],
+      initialAmount: BigDecimal
+  )(implicit F: MonadError[F, AccountError])
       extends AccountService[F] {
     import AccountError._
 

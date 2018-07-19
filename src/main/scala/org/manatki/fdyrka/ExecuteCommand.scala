@@ -18,12 +18,10 @@ trait ExecuteCommand[F[_]] {
 }
 
 object ExecuteCommand {
-  def account[F[_]: FlatMap](svc: AccountService[F],
-                             output: Output[F]): ExecuteCommand[F] =
+  def account[F[_]: FlatMap](svc: AccountService[F], output: Output[F]): ExecuteCommand[F] =
     new ExecuteCommand[F] {
       override def create(id: String): F[Unit] = svc.create(Account(id))
-      override def transfer(from: String, to: String)(
-          amount: BigDecimal): F[Unit] =
+      override def transfer(from: String, to: String)(amount: BigDecimal): F[Unit] =
         svc.transfer(Account(from), Account(to), Amount(amount))
       override def get(id: String): F[Unit] =
         svc.read(Account(id)).map(_.value.toString) >>= output.putLine
