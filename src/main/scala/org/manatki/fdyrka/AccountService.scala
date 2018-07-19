@@ -1,6 +1,6 @@
 package org.manatki.fdyrka
 
-import cats.{MonadError, ~>}
+import cats.MonadError
 import cats.instances.either._
 import cats.instances.list._
 import cats.instances.option._
@@ -11,7 +11,7 @@ import cats.syntax.foldable._
 import cats.syntax.functor._
 import cats.syntax.monadError._
 import cats.syntax.option._
-import mainecoon.{FunctorK, autoFunctorK}
+import mainecoon.autoFunctorK
 
 @autoFunctorK
 trait AccountService[F[_]] {

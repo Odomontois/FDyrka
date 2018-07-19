@@ -1,5 +1,6 @@
 package org.manatki.fdyrka
 
+import cats.MonadError
 import cats.instances.either._
 import cats.instances.list._
 import cats.instances.option._
@@ -7,8 +8,7 @@ import cats.syntax.applicative._
 import cats.syntax.either._
 import cats.syntax.flatMap._
 import cats.syntax.functor._
-import cats.{MonadError, ~>}
-import mainecoon.{FunctorK, autoFunctorK}
+import mainecoon.autoFunctorK
 
 import scala.util.Try
 

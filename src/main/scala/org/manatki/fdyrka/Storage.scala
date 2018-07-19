@@ -8,8 +8,7 @@ import cats.instances.list._
 import cats.instances.option._
 import cats.syntax.either._
 import cats.syntax.functor._
-import cats.~>
-import mainecoon.{FunctorK, autoFunctorK}
+import mainecoon.autoFunctorK
 
 @autoFunctorK
 trait Storage[K, V, F[_]] {
@@ -31,5 +30,5 @@ trait Storage[K, V, F[_]] {
           case (old, _)                => mvar.put(old)
         }
     }
-    
+
   }

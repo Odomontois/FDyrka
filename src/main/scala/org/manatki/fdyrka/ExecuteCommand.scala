@@ -1,13 +1,13 @@
 package org.manatki.fdyrka
 
+import cats.FlatMap
 import cats.instances.either._
 import cats.instances.list._
 import cats.instances.option._
 import cats.syntax.either._
-import cats.syntax.functor._
 import cats.syntax.flatMap._
-import cats.{FlatMap, Functor, ~>}
-import mainecoon.{FunctorK, autoFunctorK}
+import cats.syntax.functor._
+import mainecoon.autoFunctorK
 
 @autoFunctorK
 trait ExecuteCommand[F[_]] {
