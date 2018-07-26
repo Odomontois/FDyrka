@@ -1,0 +1,9 @@
+create Oleg
+create Belorus
+change Belorus 200
+change Oleg 1000
+change Belorus 35.5
+begin
+change Oleg -1500
+change Belorus +1500
+end
