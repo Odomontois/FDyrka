@@ -1,4 +1,4 @@
-package org.manatki.either
+package ru.tinkoff.tagless.either
 
 object EitherApp {
   def sqrt(x: Double): Either[String, Double] =

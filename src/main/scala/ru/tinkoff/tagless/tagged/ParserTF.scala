@@ -1,4 +1,5 @@
-package org.manatki.tagged
+package ru.tinkoff.tagless
+package tagged
 
 import cats.instances.list._
 import cats.kernel.Monoid

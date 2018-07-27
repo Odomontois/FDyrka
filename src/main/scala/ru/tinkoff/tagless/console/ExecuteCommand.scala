@@ -1,4 +1,4 @@
-package org.manatki.fdyrka
+package ru.tinkoff.tagless.console
 
 import cats.FlatMap
 import cats.instances.either._

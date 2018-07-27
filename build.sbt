@@ -12,6 +12,7 @@ libraryDependencies ++= List("blaze-server", "circe", "dsl")
   .map(module => "org.http4s" %% s"http4s-$module" % Http4s)
 
 libraryDependencies += "com.github.mpilquist"       %% "simulacrum"       % "0.12.0"
+libraryDependencies += "org.typelevel" %% "kittens" % "1.1.0"
 
 addCompilerPlugin("org.scalameta"  % "paradise"            % "3.0.0-M11" cross CrossVersion.patch)
 addCompilerPlugin("org.spire-math" %% "kind-projector"     % "0.9.3")

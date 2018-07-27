@@ -1,4 +1,4 @@
-package org.manatki.fdyrka
+package ru.tinkoff.tagless.console
 
 import cats.MonadError
 import cats.instances.either._

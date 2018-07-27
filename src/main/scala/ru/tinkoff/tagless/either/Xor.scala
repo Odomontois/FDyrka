@@ -1,4 +1,4 @@
-package org.manatki.either
+package ru.tinkoff.tagless.either
 
 trait Xor[A, B] { self =>
   def fold[X](l: A => X)(r: B => X): X

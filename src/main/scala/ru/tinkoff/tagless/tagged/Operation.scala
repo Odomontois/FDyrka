@@ -1,9 +1,8 @@
-package org.manatki
+package ru.tinkoff.tagless
 package tagged
 import cats.Functor
 import cats.syntax.functor._
 import mainecoon.autoInvariant
-import org.manatki.tagged
 import simulacrum.typeclass
 
 sealed trait Operation

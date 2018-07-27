@@ -1,10 +1,11 @@
-package org.manatki.tagged
+package ru.tinkoff.tagless.tagged
 
 import cats.data.OptionT
 import cats.effect.{ExitCode, IO, IOApp}
 import fs2.{io, text}
-import Interpreter.{accumulatingOperate, raiseString, stateMonoid, accumulate}
+import Interpreter.implicits._
 import cats.implicits._
+import ru.tinkoff.tagless.tagged.Interpreter.Transaction
 
 object InterpretApp extends IOApp {
   val Resource = "/operations.list"
@@ -21,10 +22,10 @@ object InterpretApp extends IOApp {
 
   override def run(args: List[String]): IO[ExitCode] =
     for {
-      ls                     <- lines
-      result                 = accumulate(ParserTF.parse[Interpreter.Result[Unit]](ls))
-      (state, (messages, _)) = result.value.run.runEmpty.value
-      _                      <- messages.traverse_(s => IO(println(s)))
-      _                      <- IO(println(s"final state:  $state"))
+      ls                       <- lines
+      result                   = ParserTF.parse[Interpreter.Result[Unit]](ls)
+      Transaction(acc, errors) = result.runS(Transaction()).value
+      _                        <- errors.traverse_(s => IO(println(s)))
+      _                        <- IO(println(s"final state:  $acc"))
     } yield ExitCode.Success
 }

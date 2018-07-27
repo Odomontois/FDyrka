@@ -1,9 +1,14 @@
 create Oleg
+change Oleg 1000
 create Belorus
 change Belorus 200
-change Oleg 1000
 change Belorus 35.5
 begin
-change Oleg -1500
-change Belorus +1500
+change Oleg -1000
+change Belorus +1000
+end
+begin
+create Nikita
+change Nikita +100
+change Oleg -100
 end

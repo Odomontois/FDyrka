@@ -1,4 +1,4 @@
-package org.manatki.either
+package ru.tinkoff.tagless.either
 
 trait Choice[A, B, C] {
   def left(a: A): C
