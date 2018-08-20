@@ -62,13 +62,19 @@ final case class AlgebraMorphism[F[_], A, B](from: Algebra[F, A], to: Algebra[F,
     f(from(fa)) == to(fa.map(f))
 }
 
-trait Operational[A] {
-  def create(id: String): A
-  def change(id: String, diff: BigDecimal): A
-  def transact(xs: List[A]): A
+final case class CoalgebraMorphism[F[_], A, B](from: Coalgebra[F, A], to: Coalgebra[F, B], f: A => B) {
+  def guaranteed(a: A)(implicit F: Functor[F]): Boolean =
+    from(a).map(f) == to(f(a))
+}
+
+trait PreOperational[A, B] {
+  def create(id: String): B
+  def change(id: String, diff: BigDecimal): B
+  def transact(xs: List[A]): B
 }
 
 object Operational {
+  type Operational[A] = PreOperational[A, A]
   def create[A](id: String)(implicit op: Operational[A]): A                   = op.create(id)
   def change[A](id: String, diff: BigDecimal)(implicit op: Operational[A]): A = op.change(id, diff)
   def transact[A](xs: List[A])(implicit op: Operational[A]): A                = op.transact(xs)
@@ -87,8 +93,25 @@ object Operational {
     case Change(id, diff) => op.change(id, diff)
     case Transact(ops)    => op.transact(ops)
   }
-}
 
+  def fromCoalgebra[A](coalg: Coalgebra[OperationF, A]): CoalgT[PreOperational, A] =
+    new CoalgT[PreOperational, A] {
+      override def run[B](a: A, op: PreOperational[A, B]): B = coalg(a) match {
+        case Create(id)       => op.create(id)
+        case Change(id, diff) => op.change(id, diff)
+        case Transact(ops)    => op.transact(ops)
+      }
+    }
+
+  def toCoalgebra[A](coalg: CoalgT[PreOperational, A]): Coalgebra[OperationF, A] = { a =>
+    val prealg = new PreOperational[A, OperationF[A]] {
+      override def create(id: String): OperationF[A]                   = OperationF.Create(id)
+      override def change(id: String, diff: BigDecimal): OperationF[A] = OperationF.Change(id, diff)
+      override def transact(xs: List[A]): OperationF[A]                = OperationF.Transact(xs)
+    }
+    coalg.run(a, prealg)
+  }
+}
 @autoInvariant
 trait Operate[A] {
   def create(id: String): A
@@ -101,5 +124,3 @@ object Operate {
   def change[A](id: String, diff: BigDecimal)(implicit op: Operate[A]): A = op.change(id, diff)
   def transact[A](xs: A)(implicit op: Operate[A]): A                      = op.transact(xs)
 }
-
-

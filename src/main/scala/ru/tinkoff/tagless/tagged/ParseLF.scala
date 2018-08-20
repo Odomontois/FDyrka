@@ -6,9 +6,8 @@ import scala.annotation.tailrec
 import scala.util.Try
 import cats.syntax.monoid._
 import cats.instances.list._
-
 import Monoid.empty
-import Operational.{change, create, transact}
+import Operational.{Operational, change, create, transact}
 
 object ParseLF {
   val Create = "create (\\w+)".r
